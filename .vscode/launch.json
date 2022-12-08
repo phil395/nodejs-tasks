@@ -1,0 +1,26 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "ts-node",
+			"type": "node",
+			"request": "launch",
+			"runtimeExecutable": "node",
+			"runtimeArgs": [
+				// "--nolazy",
+				"-r",
+				"ts-node/register" // or 'ts-node/register/transpile-only' if not needed typechecking (for more fast)
+			],
+			"args": [
+				"./timers/index.ts"
+				// extra agrs for 'process.argv'
+			],
+			"cwd": "${workspaceRoot}",
+			"internalConsoleOptions": "openOnSessionStart",
+			"skipFiles": [
+				"<node_internals>/**",
+				"node_modules/**"
+			]
+		}
+	]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "lectrum",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": {
+    "name": "phil395"
+  },
+  "engines": {
+    "node": ">=18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.18",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.3"
+  }
+}
