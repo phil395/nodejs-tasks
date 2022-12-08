@@ -5,6 +5,10 @@
   "author": {
     "name": "phil395"
   },
+  "repository": {
+    "url": "https://github.com/phil395/nodejs-tasks",
+    "type": "git"
+  },
   "engines": {
     "node": ">=18.2.0"
   },
