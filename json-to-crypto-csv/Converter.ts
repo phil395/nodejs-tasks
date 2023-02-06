@@ -1,36 +1,27 @@
 import { Duplex } from 'node:stream';
 import { EOL } from 'node:os';
+import { Duplexable } from './Duplexable';
 
 interface IConverter {
 	// setData(s: string): void
 	getStream(): Duplex;
 }
 
-export class Converter implements IConverter {
-	private data: string = '';
-	private stream = new Duplex({
-		defaultEncoding: 'utf8',
-		write: (chunk, _, next) => {
-			this.data += chunk;
-			next();
-		},
-		read() { }
-	});
+export class Converter extends Duplexable implements IConverter {
 
 	constructor(
 		private delimiter: ',' | ';' = ','
 	) {
-		this.stream.on('finish', () => this.exec());
-		this.handleError();
+		super();
 	}
 
 	getStream() {
 		return this.stream;
 	}
 
-	private parseJson() {
+	private parseJson(s: string) {
 		try {
-			const data = JSON.parse(this.data) as unknown;
+			const data = JSON.parse(s) as unknown;
 
 			if (Array.isArray(data)) {
 				return data as Record<string, unknown>[];
@@ -82,18 +73,12 @@ export class Converter implements IConverter {
 		return value;
 	}
 
-	private exec() {
-		const collection = this.parseJson();
+	protected override onReceiveData(): Duplex {
+		const collection = this.parseJson(this.getReceivedData());
 		const keys = this.constructKeys(collection);
 		const csv = this.makeCsv(collection, keys);
 
 		this.stream.push(csv);
 		return this.getStream();
-	}
-
-	private handleError(): void {
-		this.stream.on('error', (err) => {
-			console.log(err);
-		});
 	}
 }
