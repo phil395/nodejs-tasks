@@ -1,7 +1,12 @@
 import { Duplex } from 'node:stream';
 import { EOL } from 'node:os';
 
-export class Converter {
+interface IConverter {
+	// setData(s: string): void
+	getStream(): Duplex;
+}
+
+export class Converter implements IConverter {
 	private data: string = '';
 	private stream = new Duplex({
 		defaultEncoding: 'utf8',
