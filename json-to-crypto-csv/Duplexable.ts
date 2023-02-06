@@ -26,4 +26,8 @@ export class Duplexable {
 	protected onReceiveData() {
 		// will be overridden
 	}
+
+	protected getReceivedData() {
+		return this.data;
+	}
 }
