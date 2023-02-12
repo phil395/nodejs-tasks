@@ -1,25 +1,27 @@
 import * as Readline from 'readline/promises';
 
-interface IInquirer {
-	getAnswers(): Promise<IAnswer[]>;
+interface IInquirer<T extends readonly string[]> {
+	getAnswers(): Promise<IAnswers<T>>;
 }
 
-interface IQuestion {
+export interface IQuestion {
 	key: string;
 	question: string;
 }
 
-interface IAnswer extends IQuestion {
+interface IInquirerData extends IQuestion {
 	answer: string;
 }
 
-export class Inquirer implements IInquirer {
+type IAnswers<T extends readonly string[]> = Record<T[number], string>
+
+export class Inquirer<T extends readonly string[]> implements IInquirer<T> {
 	private rl = Readline.createInterface({
 		input: process.stdin,
 		output: process.stdout
 	});
 
-	private answers: IAnswer[] = [];
+	private data: IInquirerData[] = [];
 
 	constructor(
 		private questions: IQuestion[]
@@ -28,13 +30,20 @@ export class Inquirer implements IInquirer {
 	private async exec() {
 		for (const q of this.questions) {
 			const answer = await this.rl.question(q.question + ': ');
-			this.answers.push({ ...q, answer: answer.normalize() });
+			this.data.push({ ...q, answer: answer.normalize() });
 		}
 	}
 
-	async getAnswers(): Promise<IAnswer[]> {
+	private formatAnswers(): IAnswers<T> {
+		return this.data.reduce((res, { key, answer }) => {
+			res[key as T[number]] = answer
+			return res
+		}, {} as IAnswers<T>)
+	}
+
+	async getAnswers(): Promise<IAnswers<T>> {
 		await this.exec();
-		return this.answers;
+		return this.formatAnswers();
 	}
 }
 
