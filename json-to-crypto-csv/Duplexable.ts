@@ -1,33 +1,22 @@
-import { Duplex } from "node:stream";
+import { Transform } from "node:stream";
 
-export class Duplexable {
+export class TransformWrap {
 	private data: string = '';
 
-	protected stream = new Duplex({
+	protected stream = new Transform({
 		defaultEncoding: 'utf8',
-		write: (chunk, _, next) => {
-			this.data += chunk;
-			next();
+		transform: (chunk, _, next) => {
+		  this.data += chunk
+			next()
 		},
-		read() { }
+		flush: (next) => {
+		  const transformed = this.transform(this.data)
+			next(null, transformed) // push data in readable stream
+		},
 	});
 
-	constructor() {
-		this.stream.on('finish', () => this.onReceiveData());
-		this.handleError();
-	}
-
-	private handleError(): void {
-		this.stream.on('error', (err) => {
-			console.log(err);
-		});
-	}
-
-	protected onReceiveData() {
+	protected transform(data: string): string {
 		// will be overridden
-	}
-
-	protected getReceivedData() {
-		return this.data;
+		return data
 	}
 }
