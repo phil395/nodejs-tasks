@@ -1,13 +1,12 @@
-import { Duplex } from 'node:stream';
+import { Transform } from 'node:stream';
 import { EOL } from 'node:os';
-import { Duplexable } from './Duplexable';
+import { TransformWrap } from './Duplexable';
 
 interface IConverter {
-	// setData(s: string): void
-	getStream(): Duplex;
+	getStream(): Transform;
 }
 
-export class Converter extends Duplexable implements IConverter {
+export class Converter extends TransformWrap implements IConverter {
 
 	constructor(
 		private delimiter: ',' | ';' = ','
@@ -15,7 +14,7 @@ export class Converter extends Duplexable implements IConverter {
 		super();
 	}
 
-	getStream() {
+	getStream(): Transform {
 		return this.stream;
 	}
 
@@ -49,7 +48,7 @@ export class Converter extends Duplexable implements IConverter {
 	private makeCsv(
 		collection: ReturnType<typeof this.parseJson>,
 		keys: ReturnType<typeof this.constructKeys>
-	) {
+	): string {
 		const ks = [...keys];
 
 		let value = '';
@@ -73,12 +72,10 @@ export class Converter extends Duplexable implements IConverter {
 		return value;
 	}
 
-	protected override onReceiveData(): Duplex {
-		const collection = this.parseJson(this.getReceivedData());
+	protected override transform(data: string): string {
+		const collection = this.parseJson(data)
 		const keys = this.constructKeys(collection);
 		const csv = this.makeCsv(collection, keys);
-
-		this.stream.push(csv);
-		return this.getStream();
+		return csv 
 	}
 }
