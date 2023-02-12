@@ -1,6 +1,6 @@
 import { Transform } from 'node:stream';
 import { EOL } from 'node:os';
-import { TransformWrap } from './Duplexable';
+import { TransformWrap } from './TransformWrap';
 
 interface IConverter {
 	getStream(): Transform;

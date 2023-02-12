@@ -1,6 +1,6 @@
 import crypto from 'node:crypto'
 import { Transform } from 'node:stream'
-import { TransformWrap } from './Duplexable'
+import { TransformWrap } from './TransformWrap'
 
 
 interface ICipher {
