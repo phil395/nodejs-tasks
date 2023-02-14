@@ -1,5 +1,6 @@
 import path from "node:path";
 import fs from "node:fs"
+import { HELP } from "./help";
 
 
 const colorMap = {
@@ -49,4 +50,9 @@ export const treatPaths = (inputPath: unknown, outputName: unknown) => {
 	}
 
 	return [inputPath as string, path.resolve(__dirname, resultOutputName)]
+}
+
+
+export const printHelp = () => {
+	process.stdout.write(HELP)
 }
