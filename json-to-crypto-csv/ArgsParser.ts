@@ -23,7 +23,13 @@ export class ArgsParser implements IArgsParser {
 			if (!key) continue;
 			const next = argv[i + 1];
 			const nextKey = this.parseKey(next);
-			const value = (nextKey || !next) ? true : (i++, next);
+			let value
+			if (nextKey || !next) { 
+				value = true as const
+			} else {
+				i++;
+				value = next.normalize()
+			}
 			this.args[key] = value;
 		}
 	}
